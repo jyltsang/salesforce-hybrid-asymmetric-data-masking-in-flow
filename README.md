@@ -27,12 +27,12 @@ This project specifically addresses the primary limitation of pure symmetric enc
 Before deploying the Apex class, you must generate a cryptographically secure RSA key pair. **Do this on a secure local machine.**
 
 Run the following OpenSSL commands in your terminal:
-# 1. Generate a 2048-bit RSA Private Key (Keep this secure and strictly off-platform)
+#### 1. Generate a 2048-bit RSA Private Key (Keep this secure and strictly off-platform)
 ```bash
 openssl genrsa -out private_key.pem 2048
 ```
 
-# 2. Extract the Public Key in DER Base64 format (For use inside Salesforce)
+#### 2. Extract the Public Key in DER Base64 format (For use inside Salesforce)
 ```bash
 openssl rsa -in private_key.pem -pubout -outform DER | base64 > public_key_base64.txt
 ```
@@ -40,15 +40,17 @@ Copy the Base64 string from public_key_base64.txt and paste it into the RSA_PUBL
 ```bash
 private static final String RSA_PUBLIC_KEY_PEM = 'YOUR_GENERATED_BASE64_PUBLIC_KEY_HERE';
 ```
-### 2. Create Necessary Salesforce Fields
+### 2. Prepare in Salesforce 
+
+#### 1.Create Necessary Salesforce Fields
 Create the following fields on your target object (e.g., `Contact` or `Account`):
 * **Encrypted Log Field:** Text Area (Rich) maximized to 131,072 characters to store the hybrid encrypted envelope.
 * **Status Checkbox Field:** A Checkbox field to track whether the record is currently protected.
 
-### 3. Deploy Apex Classes
+#### 2. Deploy Apex Classes
 Deploy `FlowRSADataMaskingAction.cls` into your Salesforce environment.
 
-### 4. Create the Masking Flow
+#### 3. Create the Masking Flow
 Because this tool is built as an `@InvocableMethod`, it natively integrates with Salesforce Flows.
 1. Create a Flow to retrieve the target records you wish to encrypt.
 2. Use an Assignment element to add the API names of the fields you want to mask into a Text Collection variable.
@@ -59,7 +61,7 @@ Because this tool is built as an `@InvocableMethod`, it natively integrates with
    * **Log Field**: The API name of your Rich Text Log Field.
    * **Checkbox Field**: The API name of your Status Checkbox.
 
-### 5. Off-Platform Decryption via Data Loader
+### 3. Decryption (Off-Platform)
 When you need to decrypt the data, you must process it outside of Salesforce using the private key:
 1. Export the masked records via Salesforce Data Loader, ensuring you include the Record `Id` and the **Encrypted Log Field**. Save as `export.csv`.
 2. Run the provided Python utility locally, referencing your private key by using the following command:
