@@ -37,3 +37,9 @@ sfca_results.json
 
 # Local environment variables
 .env
+
+# Private key files & Python virtual environment
+*.pem
+envelope*.txt
+venv/
+__pycache__/
