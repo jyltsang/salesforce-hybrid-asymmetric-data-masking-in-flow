@@ -1,4 +1,4 @@
-# salesforce-hybrid-asymmetric-data-masking-in-flow
+# salesforce-hybrid-asymmetric-encryption-in-flow
 
 Mask personal information (PI) in Salesforce using RSA-2048 + AES-256. Salesforce holds only the **public key**; the **private key stays offline**. If the org's data and metadata are exported, the masked values cannot be decrypted.
 
